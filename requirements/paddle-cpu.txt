@@ -1,0 +1,13 @@
+# Stage 1 + Stage 3 — PaddleOCR (CPU) in the uv-managed .venv-paddle (Python 3.11).
+# NOTE: 2.6.1 has no Windows/py311 wheel; 2.6.2 does. Stays on the 2.7.x line so the
+# stable .ocr() result format used in src/stage1_paddle/ocr_engine.py keeps working.
+# paddleocr pulls its own opencv (4.6.0.66), pandas, openpyxl, shapely, etc.
+# numpy must stay <2 for paddlepaddle 2.6.
+#
+# Install (no Docker needed):
+#   uv venv .venv-paddle --python 3.11
+#   uv pip install --python .venv-paddle\Scripts\python.exe -r requirements/paddle-cpu.txt
+paddlepaddle==2.6.2
+paddleocr==2.7.3
+numpy<2
+setuptools          # paddle imports setuptools at runtime; uv venvs are bare by default

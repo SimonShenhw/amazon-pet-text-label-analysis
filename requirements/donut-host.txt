@@ -1,0 +1,16 @@
+# Stage 2 (Donut) + Stage 4 — run on the HOST python (py -3.14).
+#
+# IMPORTANT: torch is already installed on the host as 2.11.0+cu130 (CUDA 13, Blackwell).
+# DO NOT reinstall or downgrade torch — that cu130 build is what gives full 5090 performance.
+#
+# Most of the below are already present on the host (transformers 5.5, peft 0.19, opencv).
+# This file just documents Stage 2/4 deps. Install only what's missing:
+#   py -3.14 -m pip install sentencepiece
+transformers>=4.40
+peft>=0.10
+sentencepiece
+Pillow>=10.0
+pandas>=2.0
+openpyxl>=3.1
+matplotlib>=3.7
+scipy>=1.10

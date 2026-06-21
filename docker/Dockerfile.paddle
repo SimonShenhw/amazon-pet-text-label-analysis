@@ -1,0 +1,27 @@
+# PaddleOCR — CPU only. No GPU passthrough required.
+FROM python:3.11-slim
+
+ENV PYTHONUNBUFFERED=1 \
+    PYTHONDONTWRITEBYTECODE=1 \
+    PIP_NO_CACHE_DIR=1 \
+    DEBIAN_FRONTEND=noninteractive
+
+# System libs needed by OpenCV + PaddlePaddle
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        libgl1 \
+        libglib2.0-0 \
+        libgomp1 \
+        build-essential \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Install deps first for layer caching
+COPY requirements/paddle-cpu.txt /app/requirements/paddle-cpu.txt
+RUN pip install --upgrade pip && \
+    pip install -r /app/requirements/paddle-cpu.txt
+
+# Source is also bind-mounted via docker-compose for live editing
+COPY . /app
+
+CMD ["python", "-m", "src.stage1_paddle.run_ocr"]

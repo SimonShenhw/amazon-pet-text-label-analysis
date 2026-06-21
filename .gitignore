@@ -1,0 +1,36 @@
+# Python
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv/
+.venv-paddle/
+venv/
+.ipynb_checkpoints/
+
+# Data — keep folder structure (.gitkeep) but not the heavy files
+data/raw/*
+data/processed/*
+data/synthetic/*
+!data/**/.gitkeep
+*.xlsx
+*.xls
+
+# Outputs / artifacts
+outputs/csv/*
+outputs/json/*
+outputs/figures/*
+!outputs/**/.gitkeep
+
+# Model weights / caches
+*.pt
+*.pth
+*.onnx
+*.safetensors
+.cache/
+models/
+
+# OS / IDE
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

@@ -1,0 +1,8 @@
+.git
+data
+outputs
+notebooks
+tools
+**/__pycache__
+*.pyc
+*.ipynb_checkpoints

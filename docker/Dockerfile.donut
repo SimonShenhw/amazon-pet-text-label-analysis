@@ -1,0 +1,26 @@
+# OPTIONAL — GPU container for Donut (Stage 2), only if you want full containerization.
+# Normal workflow runs Donut on the HOST (py3.14 + torch cu130), which is simpler and
+# already full-performance. Using this requires Docker Desktop + WSL2 + NVIDIA Container Toolkit,
+# and `docker run --gpus all` must see the 5090 (sm_120 needs a CUDA 13.x base image).
+#
+# Pick the latest CUDA 13.x runtime tag available for your driver before building.
+FROM nvidia/cuda:13.0.1-runtime-ubuntu24.04
+
+ENV PYTHONUNBUFFERED=1 PIP_NO_CACHE_DIR=1 DEBIAN_FRONTEND=noninteractive
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+        python3 python3-pip python3-venv git \
+    && rm -rf /var/lib/apt/lists/*
+
+WORKDIR /app
+
+# Blackwell (sm_120) needs the cu130 wheels — DO NOT downgrade.
+RUN pip3 install --break-system-packages --index-url https://download.pytorch.org/whl/cu130 \
+        torch
+COPY requirements/donut-host.txt /app/requirements/donut-host.txt
+RUN pip3 install --break-system-packages -r /app/requirements/donut-host.txt
+
+COPY . /app
+
+# Run with: docker run --gpus all ...
+CMD ["python3", "-m", "src.stage2_donut.run_donut"]
