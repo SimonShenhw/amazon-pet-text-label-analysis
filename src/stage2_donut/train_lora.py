@@ -66,6 +66,15 @@ def main():
     model = VisionEncoderDecoderModel.from_pretrained(MODEL_NAME)
     tok = processor.tokenizer
 
+    # transformers 5.x: VisionEncoderDecoderConfig no longer proxies missing attrs,
+    # and forward(labels=...) reads BOTH of these for shift_tokens_right.
+    model.config.pad_token_id = tok.pad_token_id
+    if getattr(model.config, "decoder_start_token_id", None) is None:
+        model.config.decoder_start_token_id = (
+            getattr(model.config.decoder, "decoder_start_token_id", None)
+            or tok.bos_token_id
+        )
+
     lora = LoraConfig(
         r=8, lora_alpha=16, lora_dropout=0.05, bias="none",
         # covers Swin attention (query/value) and BART attention (q_proj/v_proj)

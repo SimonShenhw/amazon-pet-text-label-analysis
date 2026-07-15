@@ -194,6 +194,11 @@ full pipeline.
   check; all text-bearing main images are flagged for on-pack-vs-overlay review.
 - **Validation**: 54/54 images join to the sponsor CV dataset; our character counts
   correlate **r ≈ 0.71** with its independently computed `ocr_word_count`.
+- **Phase-2 fine-tune**: rank-8 LoRA on 480 synthetic labels reaches **100 % field-level
+  accuracy (strict JSON) on 48 held-out synthetic samples** — replacing the pretrained
+  receipt schema with `{brand, product_type, claims, net_weight}`. On real photos the
+  schema holds and claims/weights extract correctly; brand/type assignment shows the
+  expected synthetic→real domain gap (next step: annotate a small real set).
 
 > Actionable takeaway for the sponsor: the most claim-dense images lose the most text at
 > thumbnail size — key claims should be enlarged / repositioned for mobile legibility.
@@ -214,7 +219,8 @@ scoring OCR against held-out annotations and Donut field values against ground t
 
 - **Phase 1** — repo + environments, ingest, baseline PaddleOCR, annotation workflow, eval harness. ✅
 - **Phase 2** — Donut zero-shot ✅ · thumbnail scoring ✅ · augmentation + robustness ✅ ·
-  synthetic fine-tune data (480 samples) ✅ · LoRA fine-tune script ready, training run pending ⏳
+  synthetic fine-tune data (480 samples) ✅ · **LoRA fine-tune trained & evaluated
+  (100 % on held-out synthetic; see `src/stage2_donut/train_lora.py` + `infer_lora.py`)** ✅
 - **Phase 3** — keyword mapping ✅ · compliance screen ✅ · figures ✅ · held-out accuracy
   eval (annotations pending) ⏳ · sponsor recommendations & final presentation ⏳
 
