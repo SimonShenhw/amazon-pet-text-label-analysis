@@ -9,6 +9,8 @@ Run inside the Paddle container:
 """
 from __future__ import annotations
 
+import json
+
 import cv2
 import pandas as pd
 
@@ -40,7 +42,8 @@ def main():
                 "region_idx": i,
                 "text": r["text"],
                 "rec_score": round(r["score"], 4),
-                "box": r["box"],
+                # JSON string, not a repr'd nested list — parseable downstream
+                "box": json.dumps([[round(float(x), 1) for x in pt] for pt in r["box"]]),
             })
         agg = aggregate(regions)
         agg_rows.append({

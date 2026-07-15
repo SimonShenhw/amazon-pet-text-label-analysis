@@ -39,10 +39,11 @@ SSF_CV_XLSX = RAW_DIR / "SSF_CV_Dataset.xlsx"
 IMG_EXTS = {".jpg", ".jpeg", ".png", ".webp", ".bmp", ".tif", ".tiff"}
 OCR_LANG = "en"
 
-# Resolutions Amazon serves. Mobile search thumbnail is the business-critical one.
+# Resolutions Amazon serves (long-edge px, aspect ratio preserved).
+# Mobile search thumbnail is the business-critical one.
 THUMBNAIL_SIZES = {
-    "mobile_thumb": (160, 160),
-    "search_grid": (320, 320),
+    "mobile_thumb": 160,
+    "search_grid": 320,
 }
 
 # Cap the long edge of processed full-res images (keep aspect ratio). None = no cap.

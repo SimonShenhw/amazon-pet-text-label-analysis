@@ -17,8 +17,20 @@ from src import config
 from src.stage1_paddle.ocr_engine import aggregate, get_ocr, run_ocr
 
 
-def _resize(image, size):
-    return cv2.resize(image, size, interpolation=cv2.INTER_AREA)
+def _fit(image, target_long_edge):
+    """Aspect-preserving downscale so the long edge == target.
+
+    Never upscales: if the source is already smaller than the target, Amazon
+    serves it at (at most) its native resolution, so the readability delta is 0
+    by construction — squashing to a fixed square would fabricate distortion.
+    """
+    h, w = image.shape[:2]
+    long_edge = max(h, w)
+    if long_edge <= target_long_edge:
+        return image
+    scale = target_long_edge / long_edge
+    new_wh = (max(1, round(w * scale)), max(1, round(h * scale)))
+    return cv2.resize(image, new_wh, interpolation=cv2.INTER_AREA)
 
 
 def main():
@@ -36,16 +48,22 @@ def main():
         if image is None:
             continue
 
-        full = aggregate(run_ocr(ocr, image))
+        full_regions = run_ocr(ocr, image)
+        full = aggregate(full_regions)
         rec = {
             "image_id": row["image_id"],
             "processed_name": row["processed_name"],
             "full_n_regions": full["n_regions"],
             "full_chars": full["total_chars"],
             "full_mean_score": full["mean_score"],
+            # concatenated region texts -> lets Stage 4 test which specific
+            # claims/keywords survive at each resolution
+            "full_text": " | ".join(r["text"] for r in full_regions),
         }
-        for name, size in config.THUMBNAIL_SIZES.items():
-            thumb = aggregate(run_ocr(ocr, _resize(image, size)))
+        for name, target in config.THUMBNAIL_SIZES.items():
+            thumb_regions = run_ocr(ocr, _fit(image, target))
+            thumb = aggregate(thumb_regions)
+            rec[f"{name}_text"] = " | ".join(r["text"] for r in thumb_regions)
             rec[f"{name}_n_regions"] = thumb["n_regions"]
             rec[f"{name}_chars"] = thumb["total_chars"]
             rec[f"{name}_mean_score"] = thumb["mean_score"]
