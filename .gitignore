@@ -19,6 +19,7 @@ data/synthetic/*
 outputs/csv/*
 outputs/json/*
 outputs/figures/*
+outputs/*.log
 !outputs/**/.gitkeep
 
 # Model weights / caches
