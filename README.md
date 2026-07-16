@@ -193,7 +193,10 @@ full pipeline.
 - **Compliance screen**: 3 of 9 main images in the sample fail the white-background
   check; all text-bearing main images are flagged for on-pack-vs-overlay review.
 - **Validation**: 54/54 images join to the sponsor CV dataset; our character counts
-  correlate **r ≈ 0.71** with its independently computed `ocr_word_count`.
+  correlate **r ≈ 0.71** with its independently computed `ocr_word_count`. Against a
+  10-image human-annotated held-out set, Stage 1 scores **char-F1 0.90 with
+  precision ≈ 1.0** — the OCR errs by omission (curved bottles, stylized fonts),
+  never by fabrication, which is exactly the failure mode the readability metric needs.
 - **Phase-2 fine-tune**: rank-8 LoRA on 480 synthetic labels reaches **100 % field-level
   accuracy (strict JSON) on 48 held-out synthetic samples** — replacing the pretrained
   receipt schema with `{brand, product_type, claims, net_weight}`. On real photos the
